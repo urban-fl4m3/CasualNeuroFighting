@@ -14,10 +14,14 @@ namespace Game
         [SerializeField] private float _movementSpeed;
         [SerializeField] private float _jumpForceMultiplier;
         [SerializeField] private GameObject _attackSprite;
+        [SerializeField] private SpriteRenderer _hpVisualizer;
+
+        private float _hp = 1.0f;
         private bool _bCanJump = true;
         private bool _bCanAttack = true;
         private Vector3 _jumpDirection = new Vector3(0.0f, 1.0f, 0.0f);
         private float lastAttackTime = -0.2f;
+        private Color _defaultColor;
         
         
         private Rigidbody2D _rb;
@@ -28,9 +32,17 @@ namespace Game
             currentScale.x = Mathf.Abs(currentScale.x) * (int)direction;
             transform.localScale = currentScale;
         }
+
+        private void updateHpBox()
+        {
+            var newColor = _defaultColor * _hp;
+            newColor.a = 1.0f;
+            _hpVisualizer.color = newColor;
+        }
         
         private void Awake()
         {
+            _defaultColor = _hpVisualizer.color;
             _rb = GetComponent<Rigidbody2D>();
         }
 
@@ -64,6 +76,13 @@ namespace Game
             _rb.AddForce(jumpForce, ForceMode2D.Impulse);
         }
 
+        public void TakeDamage()
+        {
+            print("DamageTaken");
+            _bCanJump = true;
+            _hp -= 0.1f;
+        }
+
         private void FixedUpdate()
         {
             if (Input.GetKey(KeyCode.A))
@@ -94,6 +113,9 @@ namespace Game
                 _bCanAttack = true;
                 _attackSprite.SetActive(false);
             }
+
+            // _hp = (Mathf.Sin(Time.time) * 0.5f + 0.5f);
+            updateHpBox();
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -106,9 +128,9 @@ namespace Game
                 _normal = (_normal + contactPoint.normal) / 2.0f;
             }
             _jumpDirection = new Vector3(_normal.x, _normal.y, 0.0f).normalized;
-            
-            Debug.Log(_jumpDirection);
+
         }
+        
     }
     
 }
