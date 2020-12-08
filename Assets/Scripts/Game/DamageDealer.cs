@@ -19,7 +19,6 @@ public class DamageDealer : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter");
         var gameObject = other.gameObject;
         ActionController actionController;
         if (gameObject.TryGetComponent(out actionController))

@@ -18,10 +18,8 @@ namespace Neural_Network
         [SerializeField] private PlayerController _player1;
         [SerializeField] private PlayerController _player2;
 
-        public Transform LeftClamp;
-        public Transform BotClamp;
-
         public float GameTime { get; private set; }
+        public Vector2 FitnessValue;
 
         private Action<FightingGame> _onStop; 
 
@@ -29,18 +27,19 @@ namespace Neural_Network
         {
             ID = id;
             _onStop = onStop;
-            
+
             MovePermission(false);
         }
 
-        public void StartGame(Brain player1Brain, Brain player2Brain, Vector3 playerPosition, Vector3 devourerPosition)
+        public void StartGame(Brain player1Brain, Brain player2Brain)
         {
             IsPlaying = true;
             GameTime = Time.time;
+            FitnessValue = new Vector2(0.0f, 0.0f);
             _player1.InitializePlayer(player1Brain, _player2);
             _player2.InitializePlayer(player2Brain, _player1);
             MovePermission(true);
-            ResetAll(playerPosition, devourerPosition);
+            ResetAll();
         }
 
         public void StopGame()
@@ -49,10 +48,20 @@ namespace Neural_Network
             MovePermission(false);
             GameTime = Time.time - GameTime;
 
+            FitnessValue.x = _player1.CurrentHealth - _player2.CurrentHealth - GameTime - _player1.attackCounts * 0.03f;
+            FitnessValue.y = _player2.CurrentHealth - _player1.CurrentHealth - GameTime - _player2.attackCounts * 0.03f;
+
             _player1.Initialized = false;
 
             ResetAll();
             _onStop?.Invoke(this);
+        }
+
+        private void Update()
+        {
+            if (!IsPlaying) return;
+            if (Time.time - GameTime > 3.0f) StopGame();
+            if (_player1.CurrentHealth <= 0 || _player2.CurrentHealth <= 0) StopGame();
         }
 
         private void ResetAll(Vector3? playerPos1 = null, Vector3? playerPos2 = null)
@@ -61,22 +70,9 @@ namespace Neural_Network
             _player2.Reset();
 
             var newPlayer1Pos = _firstPlace.position;
-            if (playerPos1 != null)
-            {
-                newPlayer1Pos = playerPos1.Value;
-                newPlayer1Pos.x += LeftClamp.position.x;
-                newPlayer1Pos.z += BotClamp.position.z;
-         
-            }
-            _player1.transform.position = newPlayer1Pos;
-
             var newPlayer2Pos = _secondPlace.position;
-            if (playerPos2 != null)
-            {
-                newPlayer2Pos = playerPos2.Value;
-                newPlayer2Pos.x += LeftClamp.position.x;
-                newPlayer2Pos.z += BotClamp.position.z;
-            }
+            
+            _player1.transform.position = newPlayer1Pos;
             _player2.transform.position = newPlayer2Pos;
         }
 

@@ -9,8 +9,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1834229588066753858, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
-      propertyPath: m_Color.r
-      value: 1
+      propertyPath: m_Color.b
+      value: 0.9685755
       objectReference: {fileID: 0}
     - target: {fileID: 1834229588066753858, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
@@ -19,7 +19,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1834229588066753858, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
-      propertyPath: m_Color.b
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
+        type: 3}
+      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
@@ -39,6 +44,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -50,16 +60,6 @@ PrefabInstance:
     - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
-        type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1834229588066753859, guid: a543e71beffdea941ad0eb5762c62685,
@@ -80,7 +80,7 @@ PrefabInstance:
     - target: {fileID: 1834229588066753860, guid: a543e71beffdea941ad0eb5762c62685,
         type: 3}
       propertyPath: m_Name
-      value: Character
+      value: Character_Red
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a543e71beffdea941ad0eb5762c62685, type: 3}

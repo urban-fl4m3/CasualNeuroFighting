@@ -168,25 +168,19 @@ namespace Neural_Network.NeuralNetwork
                 index++;
             }
         }
-
-        private const int quarter = 50;
-        private const float mutationChance = 0.2f;
+        
+        private const float mutationChance = 0.1f;
         public void Mutate()
         {
-            var cont = Random.Range(0.0f, 1.0f);
-            if (cont > mutationChance) return;
-
-            var edgesCount = _edges.Count;
-            var quart = (int)(edgesCount * quarter * 0.01f);
-            var iterations = Random.Range(0, quart + 1);
-
             var edges = GetEdges();
-            for (var i = 0; i < iterations; i++)
+            for (var i = 0; i < edges.Count; i++)
             {
-                var edgeIndex = Random.Range(0, edgesCount);
+                var cont = Random.Range(0.0f, 1.0f);
+                if (cont > mutationChance) continue;
+                
                 var additionValue = Random.Range(-1.0f, 1.0f);
-                edges[edgeIndex] += additionValue;
-                edges[edgeIndex] = Mathf.Clamp(edges[edgeIndex], -1, 1);
+                edges[i] += additionValue;
+                edges[i] = Mathf.Clamp(edges[i], -1, 1);
             }
 
             SetEdges(edges);

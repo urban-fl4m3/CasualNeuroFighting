@@ -16,12 +16,14 @@ namespace Game
         [SerializeField] private SpriteRenderer _hpVisualizer;
         [SerializeField] private float _attackSpeed = 0.2f;
 
-        private float _hp = 1.0f;
-        private bool _bCanJump = true;
-        private bool _bCanAttack = true;
+        public float _hp = 1.0f;
+        public bool _bCanJump = true;
+        public bool _bCanAttack = true;
         private Vector3 _jumpDirection = new Vector3(0.0f, 1.0f, 0.0f);
         private float lastAttackTime = -0.2f;
         private Color _defaultColor;
+        
+        public float attackCounts = 0.0f;
 
 
         public float CurrentHealth => _hp;
@@ -66,6 +68,7 @@ namespace Game
         protected void ActionAttack()
         {
             if (!_bCanAttack) return;
+            attackCounts++;
             _bCanAttack = false;
             _attackSprite.SetActive(true);
             lastAttackTime = Time.time;
@@ -100,23 +103,34 @@ namespace Game
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            // if (Input.GetKeyDown(KeyCode.Space))
+            // {
+            //     ActionJump();    
+            // }
+            //
+            // if (Input.GetKeyDown(KeyCode.Mouse0))
+            // {
+            //     ActionAttack();
+            // }
+            
+            if (Time.time - lastAttackTime > (_attackSpeed / 4.0))
             {
-                ActionJump();    
+                _attackSprite.SetActive(false);
             }
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                ActionAttack();
-            }
-
+            
+            
             if (Time.time - lastAttackTime > _attackSpeed)
             {
                 _bCanAttack = true;
-                _attackSprite.SetActive(false);
             }
 
             updateHpBox();
+            onUpdate();
+        }
+
+        protected virtual void onUpdate()
+        {
+            
         }
 
         private void OnCollisionEnter2D(Collision2D other)

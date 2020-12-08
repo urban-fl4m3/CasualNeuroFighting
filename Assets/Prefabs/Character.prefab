@@ -256,7 +256,7 @@ GameObject:
   - component: {fileID: 1834229588066753858}
   - component: {fileID: 1349172467}
   - component: {fileID: 1349172468}
-  - component: {fileID: 1349172469}
+  - component: {fileID: 6337973730482769069}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -351,7 +351,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &1349172468
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -378,7 +378,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!114 &1349172469
+--- !u!114 &6337973730482769069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -387,11 +387,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1834229588066753860}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9ae868823b749248b407e9cbe01b3aa, type: 3}
+  m_Script: {fileID: 11500000, guid: 956c6cc52a1f6ac48a602acd4b68fd79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _movementSpeed: 350
   _jumpForceMultiplier: 250
   _attackSprite: {fileID: 2101337105}
   _hpVisualizer: {fileID: 979437749}
-  _attackSpeed: 0.2
+  _attackSpeed: 0.5
+  _hp: 1
+  _wallLeft: {fileID: 0}
+  _wallRight: {fileID: 0}
+  _wallBot: {fileID: 0}

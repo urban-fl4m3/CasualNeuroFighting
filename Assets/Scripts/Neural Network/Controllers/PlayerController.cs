@@ -29,8 +29,9 @@ namespace Neural_Network.Controllers
             Initialized = true;
         }
 
-        private void Update()
+        protected override void onUpdate()
         {
+            
             if (!Initialized || Stop) return;
 
             NeuronsMove();
@@ -38,7 +39,11 @@ namespace Neural_Network.Controllers
 
         public void Reset()
         {
-            
+            attackCounts = 0.0f;
+            _hp = 1.0f;
+            Rigidbody.velocity = new Vector2(0.0f, 0.0f);
+            _bCanJump = true;
+            _bCanAttack = true;
         }
 
         private void NeuronsMove()

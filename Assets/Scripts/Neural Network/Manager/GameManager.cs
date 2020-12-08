@@ -38,16 +38,19 @@ namespace Neural_Network.Manager
             _completedEncounters = 0;
 
             _activeGames = new List<FightingGame>();
-            _neuralNetworks = new Brain[_brainsCount];
-            _lifetimes = new float[_brainsCount];
+            _neuralNetworks = new Brain[_brainsCount * 2];
+            _lifetimes = new float[_brainsCount * 2];
 
-            for (var brainIndex = 0; brainIndex < _brainsCount * 2; brainIndex++)
+            for (var brainIndex = 0; brainIndex < _brainsCount * 2; brainIndex += 2)
             {
-                var brain = new Brain(_inputLayerNodes, _outputLayerNodes, _hiddenLayerNodes);
-                _neuralNetworks[brainIndex] = brain;
+                var brain1 = new Brain(_inputLayerNodes, _outputLayerNodes, _hiddenLayerNodes);
+                _neuralNetworks[brainIndex] = brain1;
+                
+                var brain2 = new Brain(_inputLayerNodes, _outputLayerNodes, _hiddenLayerNodes);
+                _neuralNetworks[brainIndex + 1] = brain2;
 
-                var newGame = Instantiate(_gamePrefab, new Vector3(brainIndex * 100, 0, 0), Quaternion.identity, transform);
-                newGame.Initialize(brainIndex, CompleteEncounter);
+                var newGame = Instantiate(_gamePrefab, new Vector3((brainIndex / 2) * 30, 0, 0), Quaternion.identity, transform);
+                newGame.Initialize(brainIndex / 2, CompleteEncounter);
                 _activeGames.Add(newGame);
             }
 
@@ -58,42 +61,23 @@ namespace Neural_Network.Manager
         {
             _cameraIndex = 0;
             _mainCamera.transform.position = _activeGames[0].CameraPlace.position;
-            var (playerPosition, devourerPosition) = GetRandomPositions();
 
-            for (var gameIndex = 0; gameIndex < _activeGames.Count; gameIndex+=2)
+            for (var gameIndex = 0; gameIndex < _activeGames.Count; gameIndex++)
             {
-                _activeGames[gameIndex].StartGame(_neuralNetworks[gameIndex],
-                    _neuralNetworks[gameIndex+1], playerPosition, devourerPosition);
+                _activeGames[gameIndex].StartGame(_neuralNetworks[gameIndex * 2],
+                    _neuralNetworks[gameIndex * 2 + 1]);
             }
 
             _generationCount++;
+            Debug.Log(_generationCount);
             UIManager.Instance.SetGeneration(_generationCount);
-        }
-
-        private (Vector3, Vector3) GetRandomPositions()
-        {
-            while (true)
-            {
-                var playerX = Random.Range(_spawnRangeX.x, _spawnRangeX.y);
-                var devourerX = Random.Range(_spawnRangeX.x, _spawnRangeX.y);
-
-                var playerZ = Random.Range(_spawnRangeZ.x, _spawnRangeZ.y);
-                var devourerZ = Random.Range(_spawnRangeZ.x, _spawnRangeZ.y);
-
-                var firstPos = new Vector3(playerX, 0.5f, playerZ);
-                var secondPos = new Vector3(devourerX, 0.5f, devourerZ);
-
-                if (Vector3.Distance(firstPos, secondPos) > _minimumDistance)
-                {
-                    return (firstPos, secondPos);
-                }
-            }
         }
 
         private void CompleteEncounter(FightingGame game)
         {
             var gameID = game.ID;
-            _lifetimes[gameID] = game.GameTime;
+            _lifetimes[gameID * 2] = game.FitnessValue.x;
+            _lifetimes[gameID * 2 + 1] = game.FitnessValue.y;
             _completedEncounters++;
 
             UIManager.Instance.SetLifeTime(game.GameTime);
@@ -120,28 +104,23 @@ namespace Neural_Network.Manager
         {
             SortBrainsAndLifetimes();
 
-            var lifetimeSum = _lifetimes.Sum();
-
             var newGeneration = new List<Brain>();
             var roulette = new List<Brain>();
+            
+            Debug.Log(_lifetimes[0]);
 
             for (var i = 0; i < _neuralNetworks.Length; i++)
             {
                 if (i < _bestCount) newGeneration.Add(_neuralNetworks[i]);
-                var coefficient = (int)(_lifetimes[i] / lifetimeSum * 100);
-
-                for (int j = 0; j < coefficient; j++)
-                {
-                    roulette.Add(_neuralNetworks[i]);
-                }
+                else roulette.Add(_neuralNetworks[i]);
             }
 
             for (var i = 0; i < _brainsCount - _bestCount; i++)
             {
-                var randIndexF = Random.Range(0, roulette.Count);
+                var randIndexF = Random.Range(0, _bestCount);
                 var randIndexS = Random.Range(0, roulette.Count);
 
-                var crossover = Brain.Crossover(roulette[randIndexF], roulette[randIndexS]);
+                var crossover = Brain.Crossover(_neuralNetworks[randIndexF], roulette[randIndexS]);
                 newGeneration.Add(crossover);
             }
 
