@@ -20,7 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57251181-00b2-4823-9a5e-d0b6027e0a09" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Casual Neuro Fighting/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/ActionController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/ActionController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +39,15 @@
       <list>
         <option value="$PROJECT_DIR$/Assets/Scripts/Game/Action.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Game/Actions.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Brain.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/NeuralNetwork/Node.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/NeuralNetwork/Brain.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/Controllers/DevourerController.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Game/ActionController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/UI/UIManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/Controllers/PlayerController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/FightingGame.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Neural Network/Manager/GameManager.cs" />
       </list>
     </option>
   </component>
@@ -47,6 +59,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="Discover.Launch.Via.Unity" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
@@ -82,6 +95,7 @@
       <option name="presentableId" value="Default" />
       <updated>1607390624534</updated>
       <workItem from="1607390627548" duration="1041000" />
+      <workItem from="1607453782331" duration="2323000" />
     </task>
     <servers />
   </component>
@@ -100,6 +114,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />

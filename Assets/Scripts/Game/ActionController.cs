@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Game
 {
@@ -15,6 +14,7 @@ namespace Game
         [SerializeField] private float _jumpForceMultiplier;
         [SerializeField] private GameObject _attackSprite;
         [SerializeField] private SpriteRenderer _hpVisualizer;
+        [SerializeField] private float _attackSpeed = 0.2f;
 
         private float _hp = 1.0f;
         private bool _bCanJump = true;
@@ -22,9 +22,12 @@ namespace Game
         private Vector3 _jumpDirection = new Vector3(0.0f, 1.0f, 0.0f);
         private float lastAttackTime = -0.2f;
         private Color _defaultColor;
-        
-        
-        private Rigidbody2D _rb;
+
+
+        public float CurrentHealth => _hp;
+        public bool CanJump => _bCanJump;
+        public bool CanAttack => _bCanAttack;
+        public Rigidbody2D Rigidbody { get; private set; }
 
         private void changeDirection(_Direction direction)
         {
@@ -43,24 +46,24 @@ namespace Game
         private void Awake()
         {
             _defaultColor = _hpVisualizer.color;
-            _rb = GetComponent<Rigidbody2D>();
+            Rigidbody = GetComponent<Rigidbody2D>();
         }
 
-        public void ActionMoveLeft()
+        protected void ActionMoveLeft()
         {
             changeDirection(_Direction.Left);
             var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
-            _rb.AddForce(movePosition);
+            Rigidbody.AddForce(movePosition);
         }
 
-        public void ActionMoveRight()
+        protected void ActionMoveRight()
         {
             changeDirection(_Direction.Right);
             var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
-            _rb.AddForce(movePosition);
+            Rigidbody.AddForce(movePosition);
         }
 
-        public void ActionAttack()
+        protected void ActionAttack()
         {
             if (!_bCanAttack) return;
             _bCanAttack = false;
@@ -68,17 +71,16 @@ namespace Game
             lastAttackTime = Time.time;
         }
 
-        public void ActionJump()
+        protected void ActionJump()
         {
             if (!_bCanJump) return;
             _bCanJump = false;
-            var jumpForce = _jumpDirection * (Time.fixedDeltaTime * _jumpForceMultiplier);// new Vector3(0, 1 * Time.fixedDeltaTime * _jumpForceMultiplier, 0);
-            _rb.AddForce(jumpForce, ForceMode2D.Impulse);
+            var jumpForce = _jumpDirection * (Time.fixedDeltaTime * _jumpForceMultiplier);
+            Rigidbody.AddForce(jumpForce, ForceMode2D.Impulse);
         }
 
         public void TakeDamage()
         {
-            print("DamageTaken");
             _bCanJump = true;
             _hp -= 0.1f;
         }
@@ -108,13 +110,12 @@ namespace Game
                 ActionAttack();
             }
 
-            if (Time.time - lastAttackTime > 0.2f)
+            if (Time.time - lastAttackTime > _attackSpeed)
             {
                 _bCanAttack = true;
                 _attackSprite.SetActive(false);
             }
 
-            // _hp = (Mathf.Sin(Time.time) * 0.5f + 0.5f);
             updateHpBox();
         }
 

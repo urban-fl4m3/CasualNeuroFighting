@@ -7,6 +7,23 @@
         <e p="Scripts" t="Include">
           <e p="Game" t="Include">
             <e p="ActionController.cs" t="Include" />
+            <e p="DamageDealer.cs" t="Include" />
+          </e>
+          <e p="Neural Network" t="Include">
+            <e p="Controllers" t="Include">
+              <e p="PlayerController.cs" t="Include" />
+            </e>
+            <e p="FightingGame.cs" t="Include" />
+            <e p="Manager" t="Include">
+              <e p="GameManager.cs" t="Include" />
+            </e>
+            <e p="NeuralNetwork" t="Include">
+              <e p="Brain.cs" t="Include" />
+              <e p="Node.cs" t="Include" />
+            </e>
+            <e p="UI" t="Include">
+              <e p="UIManager.cs" t="Include" />
+            </e>
           </e>
         </e>
       </e>

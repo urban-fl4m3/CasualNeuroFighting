@@ -94,6 +94,8 @@ GameObject:
   - component: {fileID: 2101337107}
   - component: {fileID: 2101337108}
   - component: {fileID: 2101337109}
+  - component: {fileID: 3966525281652352290}
+  - component: {fileID: 8362530209687295034}
   m_Layer: 0
   m_Name: New Sprite
   m_TagString: Untagged
@@ -109,7 +111,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101337105}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.36, y: 0.56, z: -0.8790423}
+  m_LocalPosition: {x: 2.82, y: 0.513, z: -0.8790423}
   m_LocalScale: {x: 1.3997976, y: 0.19014217, z: 1}
   m_Children: []
   m_Father: {fileID: 1834229588066753859}
@@ -193,6 +195,44 @@ BoxCollider2D:
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
 --- !u!114 &2101337109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101337105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b0c69f7a09655b40810d5406cd4a72d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!61 &3966525281652352290
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101337105}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.56, y: 2.56}
+    newSize: {x: 2.56, y: 2.56}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.56, y: 2.56}
+  m_EdgeRadius: 0
+--- !u!114 &8362530209687295034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -354,3 +394,4 @@ MonoBehaviour:
   _jumpForceMultiplier: 250
   _attackSprite: {fileID: 2101337105}
   _hpVisualizer: {fileID: 979437749}
+  _attackSpeed: 0.2
