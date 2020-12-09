@@ -169,9 +169,9 @@ namespace Neural_Network.NeuralNetwork
             }
         }
         
-        private const float mutationChance = 0.1f;
-        public void Mutate()
+        public void Mutate(float chance)
         {
+            float mutationChance = Mathf.Max(0.1f, chance);
             var edges = GetEdges();
             for (var i = 0; i < edges.Count; i++)
             {
@@ -179,14 +179,13 @@ namespace Neural_Network.NeuralNetwork
                 if (cont > mutationChance) continue;
                 
                 var additionValue = Random.Range(-1.0f, 1.0f);
-                edges[i] += additionValue;
-                edges[i] = Mathf.Clamp(edges[i], -1, 1);
+                edges[i] = additionValue;
             }
 
             SetEdges(edges);
         }
 
-        private static float ActivateValue(float value) => 2 / (1 + Mathf.Exp(-2 * value)) - 1;
+        private static float ActivateValue(float value) => Mathf.Max(0.1f * value, value);
         //private static float ActivateValue(float value) => value < 0 ? value * 0.01f : value;
 
         /// <summary> Serializing node infos to string format: x:y:z, where

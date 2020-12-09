@@ -48,8 +48,13 @@ namespace Neural_Network
             MovePermission(false);
             GameTime = Time.time - GameTime;
 
-            FitnessValue.x = _player1.CurrentHealth - _player2.CurrentHealth - GameTime - _player1.attackCounts * 0.03f;
-            FitnessValue.y = _player2.CurrentHealth - _player1.CurrentHealth - GameTime - _player2.attackCounts * 0.03f;
+            FitnessValue.x = _player1.CurrentHealth - _player2.CurrentHealth - _player1.attackCounts * 0.06f;
+            if (_player2.CurrentHealth <= 0.0f) FitnessValue.x += 100.0f;
+            if (_player1.CurrentHealth <= 0.0f) FitnessValue.x -= 100.0f;
+            
+            FitnessValue.y = _player2.CurrentHealth - _player1.CurrentHealth - _player2.attackCounts * 0.06f;
+            if (_player1.CurrentHealth <= 0.0f) FitnessValue.y += 100.0f;
+            if (_player2.CurrentHealth <= 0.0f) FitnessValue.y -= 100.0f;
 
             _player1.Initialized = false;
 
@@ -60,7 +65,7 @@ namespace Neural_Network
         private void Update()
         {
             if (!IsPlaying) return;
-            if (Time.time - GameTime > 3.0f) StopGame();
+            if (Time.time - GameTime > 10.0f) StopGame();
             if (_player1.CurrentHealth <= 0 || _player2.CurrentHealth <= 0) StopGame();
         }
 

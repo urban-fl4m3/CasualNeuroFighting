@@ -20,9 +20,8 @@ namespace Neural_Network.UI
 
         public void SetLifeTime(float value)
         {
-            if (value < _maxLifeTime) return;
             _maxLifeTime = value;
-            _lifeTimeText.text = _maxLifeTime.ToString();
+            _lifeTimeText.text = value.ToString();
         }
 
         public void SetGeneration(int generation) => _generationText.text = generation.ToString();

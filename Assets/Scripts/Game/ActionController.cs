@@ -86,6 +86,7 @@ namespace Game
         {
             _bCanJump = true;
             _hp -= 0.1f;
+            _hp = Mathf.Max(0.0f, _hp);
         }
 
         private void FixedUpdate()
@@ -113,7 +114,7 @@ namespace Game
             //     ActionAttack();
             // }
             
-            if (Time.time - lastAttackTime > (_attackSpeed / 4.0))
+            if (Time.time - lastAttackTime > (_attackSpeed / 20.0))
             {
                 _attackSprite.SetActive(false);
             }

@@ -64,8 +64,9 @@ namespace Neural_Network.Manager
 
             for (var gameIndex = 0; gameIndex < _activeGames.Count; gameIndex++)
             {
-                _activeGames[gameIndex].StartGame(_neuralNetworks[gameIndex * 2],
-                    _neuralNetworks[gameIndex * 2 + 1]);
+                if (Random.Range(0.0f, 1.0f) > 0.5) _activeGames[gameIndex].StartGame(_neuralNetworks[gameIndex * 2], _neuralNetworks[gameIndex * 2 + 1]);
+                else _activeGames[gameIndex].StartGame(_neuralNetworks[gameIndex * 2 + 1], _neuralNetworks[gameIndex * 2]);
+
             }
 
             _generationCount++;
@@ -79,8 +80,6 @@ namespace Neural_Network.Manager
             _lifetimes[gameID * 2] = game.FitnessValue.x;
             _lifetimes[gameID * 2 + 1] = game.FitnessValue.y;
             _completedEncounters++;
-
-            UIManager.Instance.SetLifeTime(game.GameTime);
 
             if (_cameraIndex == gameID)
             {
@@ -106,8 +105,16 @@ namespace Neural_Network.Manager
 
             var newGeneration = new List<Brain>();
             var roulette = new List<Brain>();
+
+            var average = 0.0f;
+            for (int i = 0; i < _lifetimes.Length; i++)
+                average += _lifetimes[i];
+            average /= _lifetimes.Length;
             
+            Debug.Log(average);
             Debug.Log(_lifetimes[0]);
+            
+            UIManager.Instance.SetLifeTime(average);
 
             for (var i = 0; i < _neuralNetworks.Length; i++)
             {
@@ -118,16 +125,21 @@ namespace Neural_Network.Manager
             for (var i = 0; i < _brainsCount - _bestCount; i++)
             {
                 var randIndexF = Random.Range(0, _bestCount);
-                var randIndexS = Random.Range(0, roulette.Count);
-
-                var crossover = Brain.Crossover(_neuralNetworks[randIndexF], roulette[randIndexS]);
+                var randIndexS = Random.Range(0, _bestCount);
+                Brain crossover;
+                if (Random.Range(0.0f, 1.0f) > 0.5)
+                {
+                    crossover = Brain.Crossover(_neuralNetworks[randIndexF], _neuralNetworks[randIndexS]);
+                }
+                else crossover = Brain.Crossover( _neuralNetworks[randIndexS], _neuralNetworks[randIndexF]);
+                
                 newGeneration.Add(crossover);
             }
 
             for (var i = _bestCount; i < newGeneration.Count; i++)
             {
                 var gen = newGeneration[i];
-                gen.Mutate();
+                gen.Mutate(0.6f - _generationCount * 0.006f);
                 _neuralNetworks[i] = gen;
             }
         }
