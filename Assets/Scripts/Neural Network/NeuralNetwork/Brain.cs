@@ -60,7 +60,7 @@ namespace Neural_Network.NeuralNetwork
                     foreach (var lastNode in lastLayer)
                     {
                         var edgeID = GenerateEdgeID(lastNode.Info, layerNode.Info);
-                        _edges.Add(edgeID, 0.0f);
+                        _edges.Add(edgeID, Random.Range(-1.0f, 1.0f));
                     }
                 }
             }
@@ -169,24 +169,71 @@ namespace Neural_Network.NeuralNetwork
             }
         }
         
-        public void Mutate(float chance)
+        public Brain DefaultMutate()
         {
-            float mutationChance = Mathf.Max(0.1f, chance);
-            var edges = GetEdges();
-            for (var i = 0; i < edges.Count; i++)
+            var counts = this._nodeCounts;
+            var inputCount = counts[0];
+            var outputCount = counts[counts.Length - 1];
+            var hiddenCounts = new List<int>();
+
+            var hiddenLayerCounts = counts.Length - 2;
+
+            for (var index = 0; index < hiddenLayerCounts; index++)
             {
-                var cont = Random.Range(0.0f, 1.0f);
-                if (cont > mutationChance) continue;
-                
-                var additionValue = Random.Range(-1.0f, 1.0f);
-                edges[i] = additionValue;
+                hiddenCounts.Add(counts[index + 1]);
             }
 
-            SetEdges(edges);
+            var mutateBrain = new Brain(inputCount, outputCount, hiddenCounts);
+            var edges = GetEdges();
+            
+            float mutatedEdgesCount = Mathf.RoundToInt(edges.Count * 0.2f);
+            for (var i = 0; i < mutatedEdgesCount; i++)
+            {
+                var index = Random.Range(0, edges.Count);
+                var additionValue = Random.Range(-1.0f, 1.0f);
+                var newValue = edges[index] + additionValue;
+                
+                if (newValue >= -1.0f && newValue <= 1.0f) edges[index] = newValue;
+            }
+
+            mutateBrain.SetEdges(edges);
+
+            return mutateBrain;
+        }
+        
+        public Brain ShiftMutate()
+        {
+            var counts = this._nodeCounts;
+            var inputCount = counts[0];
+            var outputCount = counts[counts.Length - 1];
+            var hiddenCounts = new List<int>();
+
+            var hiddenLayerCounts = counts.Length - 2;
+
+            for (var index = 0; index < hiddenLayerCounts; index++)
+            {
+                hiddenCounts.Add(counts[index + 1]);
+            }
+
+            var mutateBrain = new Brain(inputCount, outputCount, hiddenCounts);
+            var edges = GetEdges();
+            
+            float mutatedEdgesCount = Mathf.RoundToInt(edges.Count * 0.2f);
+            for (var i = 0; i < mutatedEdgesCount; i++)
+            {
+                var index = Random.Range(0, edges.Count - 1);
+                var tempValue = edges[index];
+                edges[index] = edges[index + 1];
+                edges[index + 1] = tempValue;
+            }
+
+            mutateBrain.SetEdges(edges);
+
+            return mutateBrain;
         }
 
-        private static float ActivateValue(float value) => Mathf.Max(0.1f * value, value);
-        //private static float ActivateValue(float value) => value < 0 ? value * 0.01f : value;
+        private static float ActivateValue(float value) => 2 / (1 + Mathf.Exp(-2 * value)) - 1;
+        // private static float ActivateValue(float value) => value < 0 ? value * 0.01f : value;
 
         /// <summary> Serializing node infos to string format: x:y:z, where
         /// x - layer index of past node,
@@ -200,19 +247,44 @@ namespace Neural_Network.NeuralNetwork
 
         /// <summary> Cross to brains in another one with new edges (parts from parameter brains)
         /// Also parse list on node counts and set all to new brain system. </summary>
-        public static Brain Crossover(Brain f, Brain s)
+        public static Tuple<Brain, Brain> Crossover(Brain f, Brain s)
         {
+            
             var firstEdges = f.GetEdges();
             var secondEdges = s.GetEdges();
 
             var edgesCount = firstEdges.Count;
-            var separator = Random.Range(0, edgesCount);
 
+            var separator = Random.Range(0, edgesCount);
             var newEdgeValues = new List<float>();
-            for (var edgeIndex = 0; edgeIndex < edgesCount; edgeIndex++)
+            
+            
+            for (var edgeIndex = 0; edgeIndex < separator; edgeIndex++)
             {
-                var newValue = edgeIndex > separator ? secondEdges[edgeIndex] : firstEdges[edgeIndex];
-                newEdgeValues.Add(newValue);
+                newEdgeValues.Add(firstEdges[edgeIndex]);
+            }
+
+
+            var i = 0;
+            while (newEdgeValues.Count < edgesCount && i < edgesCount)
+            {
+                var canBeAdded = true;
+                for (int j = 0; j < newEdgeValues.Count; j++)
+                {
+                    if (Mathf.Abs(newEdgeValues[j] - secondEdges[i]) <= 0.02)
+                    {
+                        canBeAdded = false;
+                        break;
+                    }
+                }
+                
+                if (canBeAdded) newEdgeValues.Add(secondEdges[i]);
+                i++;
+            }
+
+            while (newEdgeValues.Count < edgesCount)
+            {
+                newEdgeValues.Add(0.0f);
             }
 
             var counts = f._nodeCounts;
@@ -221,15 +293,54 @@ namespace Neural_Network.NeuralNetwork
             var hiddenCounts = new List<int>();
 
             var hiddenLayerCounts = counts.Length - 2;
+            for (var index = 0; index < hiddenLayerCounts; index++)
+            {
+                hiddenCounts.Add(counts[index + 1]);
+            }
+
+
+            var crossoverV1 = new Brain(inputCount, outputCount, hiddenCounts);
+            
+            crossoverV1.SetEdges(newEdgeValues);
+
+            newEdgeValues = new List<float>();
+            for (var edgeIndex = 0; edgeIndex < separator; edgeIndex++)
+            {
+                newEdgeValues.Add(secondEdges[edgeIndex]);
+            }
+
+            i = 0;
+            while (newEdgeValues.Count < edgesCount && i < edgesCount)
+            {
+                var canBeAdded = true;
+                for (int j = 0; j < newEdgeValues.Count; j++)
+                {
+                    if (Mathf.Abs(newEdgeValues[j] - firstEdges[i]) <= 0.02)
+                    {
+                        canBeAdded = false;
+                        break;
+                    }
+                }
+                
+                if (canBeAdded) newEdgeValues.Add(firstEdges[i]);
+                i++;
+            }
+            
+            while (newEdgeValues.Count < edgesCount)
+            {
+                newEdgeValues.Add(0.0f);
+            }
+            
+            hiddenCounts = new List<int>();
 
             for (var index = 0; index < hiddenLayerCounts; index++)
             {
                 hiddenCounts.Add(counts[index + 1]);
             }
 
-            var crossover = new Brain(inputCount, outputCount, hiddenCounts);
-            crossover.SetEdges(newEdgeValues);
-            return crossover;
+            var crossoverV2 = new Brain(inputCount, outputCount, hiddenCounts);
+            crossoverV2.SetEdges(newEdgeValues);
+            return new Tuple<Brain, Brain>(crossoverV1, crossoverV2);
         }
     }
 }

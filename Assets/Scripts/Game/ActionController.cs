@@ -53,6 +53,7 @@ namespace Game
 
         protected void ActionMoveLeft()
         {
+            attackCounts++;
             changeDirection(_Direction.Left);
             var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
             Rigidbody.AddForce(movePosition);
@@ -60,6 +61,7 @@ namespace Game
 
         protected void ActionMoveRight()
         {
+            attackCounts++;
             changeDirection(_Direction.Right);
             var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
             Rigidbody.AddForce(movePosition);
@@ -77,6 +79,7 @@ namespace Game
         protected void ActionJump()
         {
             if (!_bCanJump) return;
+            attackCounts++;
             _bCanJump = false;
             var jumpForce = _jumpDirection * (Time.fixedDeltaTime * _jumpForceMultiplier);
             Rigidbody.AddForce(jumpForce, ForceMode2D.Impulse);

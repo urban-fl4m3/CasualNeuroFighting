@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Neural_Network.Controllers;
 using Neural_Network.NeuralNetwork;
 using UnityEngine;
@@ -21,23 +22,29 @@ namespace Neural_Network
         public float GameTime { get; private set; }
         public Vector2 FitnessValue;
 
-        private Action<FightingGame> _onStop; 
+        private Action<FightingGame> _onStop;
 
-        public void Initialize(int id, Action<FightingGame> onStop)
+        public Tuple<Brain, float> playedBrain1;
+        public Tuple<Brain, float> playedBrain2;
+
+        public void Initialize(Action<FightingGame> onStop)
         {
-            ID = id;
             _onStop = onStop;
 
             MovePermission(false);
         }
 
-        public void StartGame(Brain player1Brain, Brain player2Brain)
+        public void StartGame(Tuple<Brain, float> player1Brain, Tuple<Brain, float> player2Brain)
         {
             IsPlaying = true;
             GameTime = Time.time;
             FitnessValue = new Vector2(0.0f, 0.0f);
-            _player1.InitializePlayer(player1Brain, _player2);
-            _player2.InitializePlayer(player2Brain, _player1);
+            
+            playedBrain1 = player1Brain;
+            playedBrain2 = player2Brain;
+            
+            _player1.InitializePlayer(player1Brain.Item1, _player2);
+            _player2.InitializePlayer(player2Brain.Item1, _player1);
             MovePermission(true);
             ResetAll();
         }
@@ -48,14 +55,19 @@ namespace Neural_Network
             MovePermission(false);
             GameTime = Time.time - GameTime;
 
-            FitnessValue.x = _player1.CurrentHealth - _player2.CurrentHealth - _player1.attackCounts * 0.06f;
-            if (_player2.CurrentHealth <= 0.0f) FitnessValue.x += 100.0f;
-            if (_player1.CurrentHealth <= 0.0f) FitnessValue.x -= 100.0f;
+            FitnessValue.x = _player1.CurrentHealth * 3.0f + (1.0f - _player2.CurrentHealth) * 6.0f + _player1.attackCounts * 0.0001f;
+            if (_player2.CurrentHealth <= 0.0f) FitnessValue.x += 15.0f;
+            if (_player1.CurrentHealth <= 0.0f) FitnessValue.x -= 15.0f;
             
-            FitnessValue.y = _player2.CurrentHealth - _player1.CurrentHealth - _player2.attackCounts * 0.06f;
-            if (_player1.CurrentHealth <= 0.0f) FitnessValue.y += 100.0f;
-            if (_player2.CurrentHealth <= 0.0f) FitnessValue.y -= 100.0f;
+            FitnessValue.y = _player2.CurrentHealth * 3.0f - (1.0f - _player1.CurrentHealth) * 6.0f + _player2.attackCounts * 0.0001f;
+            if (_player1.CurrentHealth <= 0.0f) FitnessValue.y += 15.0f;
+            if (_player2.CurrentHealth <= 0.0f) FitnessValue.y -= 15.0f;
+            FitnessValue.x += 5000;
+            FitnessValue.y += 5000;
 
+            playedBrain1 = new Tuple<Brain, float>(playedBrain1.Item1, FitnessValue.x);
+            playedBrain2 = new Tuple<Brain, float>(playedBrain2.Item1, FitnessValue.y);
+            
             _player1.Initialized = false;
 
             ResetAll();

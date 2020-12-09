@@ -524,7 +524,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2190896259202780231}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.297884, y: -1.7225589, z: 7.323156}
+  m_LocalPosition: {x: 1, y: -1.7225589, z: 7.323156}
   m_LocalScale: {x: 0.3, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 1527569800918402943}
@@ -554,7 +554,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3732865507562158193}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.462116, y: -1.6825589, z: 7.323156}
+  m_LocalPosition: {x: -5, y: -1.6825589, z: 7.323156}
   m_LocalScale: {x: 0.3, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 1527569800918402943}
@@ -614,6 +614,7 @@ MonoBehaviour:
   _secondPlace: {fileID: 1659034683484530096}
   _player1: {fileID: 8487735953396615993}
   _player2: {fileID: 648126657113886175}
+  FitnessValue: {x: 0, y: 0}
 --- !u!1001 &1820025940348685663
 PrefabInstance:
   m_ObjectHideFlags: 0
