@@ -1,155 +1,210 @@
-﻿using UnityEngine;
+﻿using System;
+using Neural_Network;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using UnityEngine;
 
 namespace Game
 {
-    public class ActionController : MonoBehaviour
+    public class ActionController : Agent
     {
-        private enum _Direction
-        {
-            Left = -1,
-            Right = 1
-        }
-        
+        [SerializeField] private FightingGame _fightingGame;
         [SerializeField] private float _movementSpeed;
         [SerializeField] private float _jumpForceMultiplier;
         [SerializeField] private GameObject _attackSprite;
         [SerializeField] private SpriteRenderer _hpVisualizer;
         [SerializeField] private float _attackSpeed = 0.2f;
+        [SerializeField] private ActionController _opponent;
 
-        public float _hp = 1.0f;
-        public bool _bCanJump = true;
-        public bool _bCanAttack = true;
-        private Vector3 _jumpDirection = new Vector3(0.0f, 1.0f, 0.0f);
-        private float lastAttackTime = -0.2f;
+        [SerializeField] private Transform _wallLeft;
+        [SerializeField] private Transform _wallRight;
+        [SerializeField] private Transform _wallBot;
+        [SerializeField] private Transform _wallTop;
+        [SerializeField] private Transform _startPosition;
+
+        public float Health { get; private set; }
+
+        private bool _bCanJump;
+        private bool _bCanAttack;
+        private Vector3 _jumpDirection;
+        private float _lastAttackTime;
         private Color _defaultColor;
+
+        private Rigidbody2D _rigidbody;
         
-        public float attackCounts = 0.0f;
+        private Vector3 _wallBotPosition => _wallBot.position;
+        private Vector3 _wallTopPosition => _wallTop.position;
+        private Vector3 _wallLeftPosition => _wallLeft.position;
+        private Vector3 _wallRightPosition => _wallRight.position;
 
+        private float _damageTaken;
+        
+        public override void Initialize()
+        {
+            _jumpDirection = new Vector3(0.0f, 1.0f, 0.0f);
+            _defaultColor = _hpVisualizer.color;
+            _rigidbody = GetComponent<Rigidbody2D>();
+            Reset();
+        }
 
-        public float CurrentHealth => _hp;
-        public bool CanJump => _bCanJump;
-        public bool CanAttack => _bCanAttack;
-        public Rigidbody2D Rigidbody { get; private set; }
+        public override void CollectObservations(VectorSensor sensor)
+        {
+            sensor.AddObservation(_rigidbody.velocity);
+            sensor.AddObservation(_opponent._rigidbody.velocity);
 
-        private void changeDirection(_Direction direction)
+            var playerPosition = transform.position;
+            var enemyPosition = _opponent.transform.position;
+
+            var enemyDistanceToLeftWall = enemyPosition.x - _wallLeftPosition.x;
+            var enemyDistanceToFloor = enemyPosition.y - _wallBotPosition.y;
+
+            sensor.AddObservation(enemyDistanceToLeftWall / (_wallRightPosition.x - _wallLeftPosition.x));
+            sensor.AddObservation(enemyDistanceToFloor / (_wallTopPosition.y - _wallBotPosition.y));
+
+            var playerDistanceToLeftWall = playerPosition.x - _wallLeftPosition.x;
+            var playerDistanceToFloor = playerPosition.y - _wallBotPosition.y;
+
+            sensor.AddObservation(playerDistanceToLeftWall / (_wallRight.position.x - _wallLeft.position.x));
+            sensor.AddObservation(playerDistanceToFloor / (_wallTop.position.y - _wallBot.position.y));
+
+            var playerCanAttack = Convert.ToInt32(_bCanAttack);
+            var playerCanJump = Convert.ToInt32(_bCanJump);
+            var opponentCanAttack = Convert.ToInt32(_opponent._bCanAttack);
+
+            sensor.AddObservation(playerCanAttack);
+            sensor.AddObservation(playerCanJump);
+            sensor.AddObservation(opponentCanAttack);
+
+            var scale = transform.localScale.x;
+            var direction = scale < 0.0f ? -1 : 1;
+
+            sensor.AddObservation(direction);
+        }
+
+        public override void OnActionReceived(float[] vectorAction)
+        {
+            var left = vectorAction[0];
+            var right = vectorAction[1];
+            var jump = vectorAction[2];
+            var attack = vectorAction[3];
+            
+            SetReward(-_damageTaken);
+            _opponent.SetReward(_damageTaken);
+
+            if (left >= 1.0f) ActionMoveLeft();
+            if (right >= 1.0f) ActionMoveRight();
+            if (jump >= 1.0f) ActionJump();
+            if (attack >= 1.0f) ActionAttack();
+        }
+
+        public void EndGame()
+        {
+            EndEpisode();
+        }
+
+        public override void OnEpisodeBegin()
+        {
+            Reset();
+        }
+
+        private void ActionMoveLeft()
+        {
+            ChangeDirection(-1);
+            var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
+            _rigidbody.AddForce(movePosition);
+        }
+
+        private void ActionMoveRight()
+        {
+            ChangeDirection(1);
+            var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
+            _rigidbody.AddForce(movePosition);
+        }
+
+        private void ChangeDirection(int direction)
         {
             var currentScale = transform.localScale;
-            currentScale.x = Mathf.Abs(currentScale.x) * (int)direction;
+            currentScale.x = Mathf.Abs(currentScale.x) * direction;
             transform.localScale = currentScale;
         }
 
-        private void updateHpBox()
+        private void ActionAttack()
         {
-            var newColor = _defaultColor * _hp;
-            newColor.a = 1.0f;
-            _hpVisualizer.color = newColor;
-        }
-        
-        private void Awake()
-        {
-            _defaultColor = _hpVisualizer.color;
-            Rigidbody = GetComponent<Rigidbody2D>();
+            if (_bCanAttack) 
+            {
+                _bCanAttack = false;
+                _attackSprite.SetActive(true);
+                _lastAttackTime = Time.time;
+            }
         }
 
-        protected void ActionMoveLeft()
+        private void ActionJump()
         {
-            attackCounts++;
-            changeDirection(_Direction.Left);
-            var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
-            Rigidbody.AddForce(movePosition);
-        }
-
-        protected void ActionMoveRight()
-        {
-            attackCounts++;
-            changeDirection(_Direction.Right);
-            var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
-            Rigidbody.AddForce(movePosition);
-        }
-
-        protected void ActionAttack()
-        {
-            if (!_bCanAttack) return;
-            attackCounts++;
-            _bCanAttack = false;
-            _attackSprite.SetActive(true);
-            lastAttackTime = Time.time;
-        }
-
-        protected void ActionJump()
-        {
-            if (!_bCanJump) return;
-            attackCounts++;
-            _bCanJump = false;
-            var jumpForce = _jumpDirection * (Time.fixedDeltaTime * _jumpForceMultiplier);
-            Rigidbody.AddForce(jumpForce, ForceMode2D.Impulse);
+            if (_bCanJump)
+            {
+                _bCanJump = false;
+                var jumpForce = _jumpDirection * (Time.fixedDeltaTime * _jumpForceMultiplier);
+                _rigidbody.AddForce(jumpForce, ForceMode2D.Impulse);
+            }
         }
 
         public void TakeDamage()
         {
             _bCanJump = true;
-            _hp -= 0.1f;
-            _hp = Mathf.Max(0.0f, _hp);
-        }
-
-        private void FixedUpdate()
-        {
-            if (Input.GetKey(KeyCode.A))
-            {
-                ActionMoveLeft();
-            }
-            
-            if (Input.GetKey(KeyCode.D))
-            {
-                ActionMoveRight();
-            }
+            Health -= 0.1f;
+            Health = Mathf.Max(0.0f, Health);
+            _damageTaken += 0.1f;
         }
 
         private void Update()
         {
-            // if (Input.GetKeyDown(KeyCode.Space))
-            // {
-            //     ActionJump();    
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.Mouse0))
-            // {
-            //     ActionAttack();
-            // }
-            
-            if (Time.time - lastAttackTime > (_attackSpeed / 20.0))
+            if (Time.time - _lastAttackTime > (_attackSpeed / 20.0))
             {
                 _attackSprite.SetActive(false);
             }
-            
-            
-            if (Time.time - lastAttackTime > _attackSpeed)
+
+            if (Time.time - _lastAttackTime > _attackSpeed)
             {
                 _bCanAttack = true;
             }
 
-            updateHpBox();
-            onUpdate();
+            UpdateHealthBox();
         }
-
-        protected virtual void onUpdate()
+        
+        private void UpdateHealthBox()
         {
-            
+            var newColor = _defaultColor * Health;
+            newColor.a = 1.0f;
+            _hpVisualizer.color = newColor;
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
             _bCanJump = true;
             var _normal = new Vector2(0.0f, 4.0f);
-            
+
             foreach (var contactPoint in other.contacts)
             {
                 _normal = (_normal + contactPoint.normal) / 2.0f;
             }
-            _jumpDirection = new Vector3(_normal.x, _normal.y, 0.0f).normalized;
 
+            _jumpDirection = new Vector3(_normal.x, _normal.y, 0.0f).normalized;
         }
         
+        private void Reset()
+        {
+            transform.position = _startPosition.position;
+
+            Health = 1.0f;
+            _rigidbody.velocity = new Vector2(0.0f, 0.0f);
+            _lastAttackTime = -0.2f;
+            _bCanJump = true;
+            _bCanAttack = true;
+
+            if (_fightingGame != null)
+            {
+                _fightingGame.ResetTime();
+            }
+        }
     }
-    
 }

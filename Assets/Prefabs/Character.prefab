@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 979437750}
   - component: {fileID: 979437749}
   m_Layer: 0
-  m_Name: New Sprite
+  m_Name: Health_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3966525281652352290}
   - component: {fileID: 8362530209687295034}
   m_Layer: 0
-  m_Name: New Sprite
+  m_Name: Attack_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -256,7 +256,9 @@ GameObject:
   - component: {fileID: 1834229588066753858}
   - component: {fileID: 1349172467}
   - component: {fileID: 1349172468}
-  - component: {fileID: 6337973730482769069}
+  - component: {fileID: 2229331493119527258}
+  - component: {fileID: 45256821723781974}
+  - component: {fileID: 6622305278667604737}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -378,7 +380,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!114 &6337973730482769069
+--- !u!114 &2229331493119527258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -387,18 +389,60 @@ MonoBehaviour:
   m_GameObject: {fileID: 1834229588066753860}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 956c6cc52a1f6ac48a602acd4b68fd79, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BrainParameters:
+    VectorObservationSize: 13
+    NumStackedVectorObservations: 1
+    VectorActionSize: 01000000010000000100000001000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: fighter_behaviour
+  TeamId: 0
+  m_UseChildSensors: 1
+--- !u!114 &45256821723781974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834229588066753860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9ae868823b749248b407e9cbe01b3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 5000
+  _fightingGame: {fileID: 0}
   _movementSpeed: 350
   _jumpForceMultiplier: 250
   _attackSprite: {fileID: 2101337105}
   _hpVisualizer: {fileID: 979437749}
   _attackSpeed: 1
-  _hp: 1
-  _bCanJump: 1
-  _bCanAttack: 1
-  attackCounts: 0
+  _opponent: {fileID: 0}
   _wallLeft: {fileID: 0}
   _wallRight: {fileID: 0}
   _wallBot: {fileID: 0}
+  _wallTop: {fileID: 0}
+  _startPosition: {fileID: 0}
+--- !u!114 &6622305278667604737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834229588066753860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  TakeActionsBetweenDecisions: 1
