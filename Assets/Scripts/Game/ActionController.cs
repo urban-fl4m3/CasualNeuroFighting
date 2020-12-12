@@ -3,6 +3,7 @@ using Neural_Network;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
@@ -89,8 +90,7 @@ namespace Game
             var jump = vectorAction[2];
             var attack = vectorAction[3];
             
-            SetReward(-_damageTaken);
-            _opponent.AddReward(_damageTaken);
+            _opponent.SetReward(_damageTaken);
 
             if (movementLeft >= 0.5f) ActionMoveLeft();
             if (movementRight >= 0.5f) ActionMoveRight();
@@ -207,7 +207,7 @@ namespace Game
         
         private void Reset()
         {
-            transform.position = _startPosition.position;
+            transform.position = new Vector3(Random.Range(0.0f, 1.0f) * (_wallRight.position.x - _wallLeft.position.x) + _wallLeft.position.x, -1.6f, 0.0f); ;
 
             Health = 1.0f;
             _rigidbody.velocity = new Vector2(0.0f, 0.0f);
