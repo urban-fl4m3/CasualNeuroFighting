@@ -19,8 +19,10 @@ namespace Neural_Network
                 _player1.Health == 0 ||
                 _player2.Health == 0)
             {
-                _player1.AddReward(1 - _player2.Health * _player1.Health);
-                _player2.AddReward(1 - _player1.Health * _player2.Health);
+                if (_player1.Health != 0) _player1.AddReward(1.0f -_gameTime / _gameTimeThreshold);
+                if (_player2.Health != 0) _player2.AddReward(1.0f -_gameTime / _gameTimeThreshold);
+                _player1.AddReward((1 - _player2.Health) * _player1.Health);
+                _player2.AddReward((1 - _player1.Health) * _player2.Health);
                 StopFight();
             }
         }

@@ -578,7 +578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9228ba6089b54b1e8ab0ebfd87951af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameTimeThreshold: 15
+  _gameTimeThreshold: 60
   _player1: {fileID: 6893694447831259684}
   _player2: {fileID: 2494914689392762050}
 --- !u!1001 &1820025940348685663

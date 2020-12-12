@@ -97,6 +97,7 @@ namespace Game
             
             if (jump >= 0.5f) ActionJump();
             if (attack >= 0.5f) ActionAttack();
+            _damageTaken = 0.0f;
         }
 
         public void EndGame()
@@ -115,10 +116,10 @@ namespace Game
             var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
             _rigidbody.AddForce(movePosition);
 
-            if (transform.position.x > _opponent.transform.position.x)
-            {
-                AddReward(0.001f);
-            }
+            // if (transform.position.x > _opponent.transform.position.x)
+            // {
+            //     AddReward(0.001f);
+            // }
         }
 
         private void ActionMoveRight()
@@ -126,11 +127,11 @@ namespace Game
             ChangeDirection(1);
             var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
             _rigidbody.AddForce(movePosition);
-            
-            if (transform.position.x < _opponent.transform.position.x)
-            {
-                AddReward(0.001f);
-            }
+            //
+            // if (transform.position.x < _opponent.transform.position.x)
+            // {
+            //     AddReward(0.001f);
+            // }
         }
 
         private void ChangeDirection(int direction)
