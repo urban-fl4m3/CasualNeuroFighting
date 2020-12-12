@@ -38,6 +38,7 @@ namespace Game
         private Vector3 _wallRightPosition => _wallRight.position;
 
         private float _damageTaken;
+        private int _direction;
         
         public override void Initialize()
         {
@@ -83,18 +84,19 @@ namespace Game
 
         public override void OnActionReceived(float[] vectorAction)
         {
-            var left = vectorAction[0];
-            var right = vectorAction[1];
+            var movementLeft = vectorAction[0];
+            var movementRight = vectorAction[1];
             var jump = vectorAction[2];
             var attack = vectorAction[3];
             
             SetReward(-_damageTaken);
-            _opponent.SetReward(_damageTaken);
+            _opponent.AddReward(_damageTaken);
 
-            if (left >= 1.0f) ActionMoveLeft();
-            if (right >= 1.0f) ActionMoveRight();
-            if (jump >= 1.0f) ActionJump();
-            if (attack >= 1.0f) ActionAttack();
+            if (movementLeft >= 0.5f) ActionMoveLeft();
+            if (movementRight >= 0.5f) ActionMoveRight();
+            
+            if (jump >= 0.5f) ActionJump();
+            if (attack >= 0.5f) ActionAttack();
         }
 
         public void EndGame()
@@ -112,6 +114,11 @@ namespace Game
             ChangeDirection(-1);
             var movePosition = new Vector3(-1 * _movementSpeed * Time.fixedDeltaTime, 0, 0);
             _rigidbody.AddForce(movePosition);
+
+            if (transform.position.x > _opponent.transform.position.x)
+            {
+                AddReward(0.001f);
+            }
         }
 
         private void ActionMoveRight()
@@ -119,6 +126,11 @@ namespace Game
             ChangeDirection(1);
             var movePosition = new Vector3(_movementSpeed * Time.fixedDeltaTime, 0, 0);
             _rigidbody.AddForce(movePosition);
+            
+            if (transform.position.x < _opponent.transform.position.x)
+            {
+                AddReward(0.001f);
+            }
         }
 
         private void ChangeDirection(int direction)
@@ -126,6 +138,7 @@ namespace Game
             var currentScale = transform.localScale;
             currentScale.x = Mathf.Abs(currentScale.x) * direction;
             transform.localScale = currentScale;
+            _direction = direction;
         }
 
         private void ActionAttack()

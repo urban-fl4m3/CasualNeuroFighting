@@ -1,5 +1,4 @@
-﻿using System;
-using Game;
+﻿using Game;
 using UnityEngine;
 
 namespace Neural_Network
@@ -20,8 +19,8 @@ namespace Neural_Network
                 _player1.Health == 0 ||
                 _player2.Health == 0)
             {
-                _player1.SetReward(1 - _player2.Health * _player1.Health - _gameTime / _gameTimeThreshold);
-                _player2.SetReward(1 - _player1.Health * _player2.Health - _gameTime / _gameTimeThreshold);
+                _player1.AddReward(1 - _player2.Health * _player1.Health);
+                _player2.AddReward(1 - _player1.Health * _player2.Health);
                 StopFight();
             }
         }
